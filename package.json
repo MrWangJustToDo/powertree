@@ -1,6 +1,6 @@
 {
   "name": "powertree",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "more than tree",
   "main": "powerTree.js",
   "scripts": {
@@ -11,6 +11,10 @@
   ],
   "bin": {
     "p-tree": "./p-tree"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MrWangJustToDo/powertree.git"
   },
   "author": "mrwang",
   "license": "ISC",
