@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+
+const powerTree = require("./powerTree.js");
+const yargs = require("yargs");
+
+if (Object.prototype.hasOwnProperty.call(yargs.argv, "c")) {
+  if (Object.prototype.hasOwnProperty.call(yargs.argv, "e")) {
+    if (yargs.argv._.length == 0) {
+      powerTree.listFiles(true, true, ".").then(console.log);
+    } else {
+      powerTree.listFiles(true, true, ...yargs.argv._).then(console.log);
+    }
+  } else {
+    if (yargs.argv._.length == 0) {
+      powerTree.listFiles(true, false, ".").then(console.log);
+    } else {
+      powerTree.listFiles(true, false, ...yargs.argv._).then(console.log);
+    }
+  }
+} else {
+  if (Object.prototype.hasOwnProperty.call(yargs.argv, "e")) {
+    if (yargs.argv._.length == 0) {
+      powerTree.listFiles(false, true, ".").then(console.log);
+    } else {
+      powerTree.listFiles(false, true, ...yargs.argv._).then(console.log);
+    }
+  } else {
+    if (yargs.argv._.length == 0) {
+      powerTree.listFiles(false, false, ".").then(console.log);
+    } else {
+      powerTree.listFiles(false, false, ...yargs.argv._).then(console.log);
+    }
+  }
+}
