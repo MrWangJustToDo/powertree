@@ -50,9 +50,9 @@ function getFileRowExtend(
     currentTemp += mod;
     let flag = execFileJudge(mod);
     if (currentColor && flag) {
-      currentTemp += nextPrePath + joinString + filePath + "*";
+      currentTemp += " " + nextPrePath + joinString + filePath + "*";
     } else {
-      currentTemp += nextPrePath + joinString + filePath;
+      currentTemp += " " + nextPrePath + joinString + filePath;
     }
     currentTemp = currentTemp.padEnd(initPad);
     currentTemp +=

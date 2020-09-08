@@ -15,7 +15,46 @@ function getDirRowBase(temp, lastPath, nextPrePath, joinString, colorful) {
   });
 }
 
-function getDirRow(
+function getDirRowEx(
+  temp,
+  currentPath,
+  lastPath,
+  nextPrePath,
+  nextPreExtendPath,
+  initPad,
+  joinString,
+  size,
+  currentColor,
+  isUnixMod
+) {
+  if (isUnixMod) {
+    return getDirRowUnix(
+      temp,
+      currentPath,
+      lastPath,
+      nextPrePath,
+      nextPreExtendPath,
+      initPad,
+      joinString,
+      size,
+      currentColor
+    );
+  } else {
+    return getDirRowWindows(
+      temp,
+      currentPath,
+      lastPath,
+      nextPrePath,
+      nextPreExtendPath,
+      initPad,
+      joinString,
+      size,
+      currentColor
+    );
+  }
+}
+
+function getDirRowWindows(
   temp,
   currentPath,
   lastPath,
@@ -28,7 +67,7 @@ function getDirRow(
 ) {
   return fileStat(currentPath).then((file) => {
     let currentTemp = "";
-    currentTemp += `d${getChmod(file.mode)}`;
+    currentTemp += `d${getChmod(file.mode)} `;
     currentTemp += nextPrePath + joinString + lastPath;
     currentTemp = currentTemp.padEnd(initPad);
     currentTemp += nextPreExtendPath + joinString + prettyBytes(size);
@@ -55,7 +94,7 @@ function getDirRowUnix(
   let currentTemp = "";
   return fileStat(currentPath)
     .then((file) => {
-      currentTemp += `d${getChmod(file.mode)}`;
+      currentTemp += `d${getChmod(file.mode)} `;
       currentTemp += nextPrePath + joinString + lastPath;
       currentTemp = currentTemp.padEnd(initPad);
       currentTemp += nextPreExtendPath + joinString + prettyBytes(size);
@@ -75,5 +114,4 @@ function getDirRowUnix(
 }
 
 exports.getDirRowBase = getDirRowBase;
-exports.getDirRow = getDirRow;
-exports.getDirRowUnix = getDirRowUnix;
+exports.getDirRowEx = getDirRowEx;

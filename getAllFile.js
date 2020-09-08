@@ -1,5 +1,5 @@
 const path = require("path");
-const { getDirRowBase, getDirRow, getDirRowUnix } = require("./getDirItem");
+const { getDirRowBase, getDirRowEx } = require("./getDirItem");
 const {
   getFileRowBase,
   getFileRowBaseColorful,
@@ -149,58 +149,30 @@ function getAllFileExtend(
 ) {
   return getFolderSize(currentDir)
     .then((size) => {
-      if (unixModule) {
-        if (isLast) {
-          return getDirRowUnix(
-            lastStr,
-            currentDir,
-            currentDir.substr(currentDir.lastIndexOf("/") + 1),
-            nextPre.slice(0, nextPre.length - 1),
-            nextExtendPre.slice(0, nextExtendPre.length - 1),
-            initPad,
-            "└── ",
-            size,
-            currentColor
-          );
-        } else {
-          return getDirRowUnix(
-            lastStr,
-            currentDir,
-            currentDir.substr(currentDir.lastIndexOf("/") + 1),
-            nextPre.slice(0, nextPre.length - 1),
-            nextExtendPre.slice(0, nextExtendPre.length - 1),
-            initPad,
-            "├── ",
-            size,
-            currentColor
-          );
-        }
+      if (isLast) {
+        return getDirRowEx(
+          lastStr,
+          currentDir,
+          currentDir.substr(currentDir.lastIndexOf("/") + 1),
+          nextPre.slice(0, nextPre.length - 1),
+          nextExtendPre.slice(0, nextExtendPre.length - 1),
+          initPad,
+          "└── ",
+          size,
+          currentColor
+        );
       } else {
-        if (isLast) {
-          return getDirRow(
-            lastStr,
-            currentDir,
-            currentDir.substr(currentDir.lastIndexOf("/") + 1),
-            nextPre.slice(0, nextPre.length - 1),
-            nextExtendPre.slice(0, nextExtendPre.length - 1),
-            initPad,
-            "└── ",
-            size,
-            currentColor
-          );
-        } else {
-          return getDirRow(
-            lastStr,
-            currentDir,
-            currentDir.substr(currentDir.lastIndexOf("/") + 1),
-            nextPre.slice(0, nextPre.length - 1),
-            nextExtendPre.slice(0, nextExtendPre.length - 1),
-            initPad,
-            "├── ",
-            size,
-            currentColor
-          );
-        }
+        return getDirRowEx(
+          lastStr,
+          currentDir,
+          currentDir.substr(currentDir.lastIndexOf("/") + 1),
+          nextPre.slice(0, nextPre.length - 1),
+          nextExtendPre.slice(0, nextExtendPre.length - 1),
+          initPad,
+          "├── ",
+          size,
+          currentColor
+        );
       }
     })
     .then((lastStrAddCurrentDir) =>

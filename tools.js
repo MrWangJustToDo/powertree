@@ -56,7 +56,6 @@ function readDir() {
 function getChmod(para) {
   let temp = para.toString(8);
   let fileMod = temp.slice(temp.length - 3);
-  // return [getMod(fileMod[0]), getMod(fileMod[1]), getMod(fileMod[2])].join('');
   return getMod(fileMod[0]) + getMod(fileMod[1]) + getMod(fileMod[2]);
 }
 
