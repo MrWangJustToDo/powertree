@@ -37,7 +37,7 @@ function getAllFileBase(lastStr, currentDir, nextPre, isLast) {
                 preTemp,
                 fileArr[i].name,
                 nextPre,
-                "├── ".padStart(6)
+                "├── ".padStart(7)
               )
             );
           } else {
@@ -46,7 +46,7 @@ function getAllFileBase(lastStr, currentDir, nextPre, isLast) {
                 preTemp,
                 fileArr[i].name,
                 nextPre,
-                "└── ".padStart(6)
+                "└── ".padStart(7)
               )
             );
           }
@@ -56,8 +56,8 @@ function getAllFileBase(lastStr, currentDir, nextPre, isLast) {
               preTemp,
               path.join(currentDir, fileArr[i].name),
               i !== fileArr.length - 1
-                ? nextPre + "│".padStart(3)
-                : nextPre + " ".padStart(3),
+                ? nextPre + "│".padStart(4)
+                : nextPre + " ".padStart(4),
               i == fileArr.length - 1
             )
           );
@@ -102,7 +102,7 @@ function getAllFileBaseColorful(lastStr, currentDir, nextPre, isLast) {
                 fileArr[i].name,
                 currentDir,
                 nextPre,
-                "├── ".padStart(6)
+                "├── ".padStart(7)
               )
             );
           } else {
@@ -112,7 +112,7 @@ function getAllFileBaseColorful(lastStr, currentDir, nextPre, isLast) {
                 fileArr[i].name,
                 currentDir,
                 nextPre,
-                "└── ".padStart(6)
+                "└── ".padStart(7)
               )
             );
           }
@@ -122,8 +122,8 @@ function getAllFileBaseColorful(lastStr, currentDir, nextPre, isLast) {
               preTemp,
               path.join(currentDir, fileArr[i].name),
               i !== fileArr.length - 1
-                ? nextPre + "│".padStart(3)
-                : nextPre + " ".padStart(3),
+                ? nextPre + "│".padStart(4)
+                : nextPre + " ".padStart(4),
               i == fileArr.length - 1
             )
           );
@@ -189,7 +189,7 @@ function getAllFileExtend(
                   nextPre,
                   nextExtendPre,
                   initPad,
-                  "├── ".padStart(6),
+                  "├── ".padStart(7),
                   currentColor
                 )
               );
@@ -202,7 +202,7 @@ function getAllFileExtend(
                   nextPre,
                   nextExtendPre,
                   initPad,
-                  "└── ".padStart(6),
+                  "└── ".padStart(7),
                   currentColor
                 )
               );
@@ -213,11 +213,11 @@ function getAllFileExtend(
                 preTemp,
                 path.join(currentDir, fileArr[i].name),
                 i !== fileArr.length - 1
-                  ? nextPre + "│".padStart(3)
-                  : nextPre + " ".padStart(3),
+                  ? nextPre + "│".padStart(4)
+                  : nextPre + " ".padStart(4),
                 i !== fileArr.length - 1
-                  ? nextExtendPre + "│".padStart(3)
-                  : nextExtendPre + " ".padStart(3),
+                  ? nextExtendPre + "│".padStart(4)
+                  : nextExtendPre + " ".padStart(4),
                 i == fileArr.length - 1,
                 unixModule,
                 initPad,
