@@ -1,115 +1,129 @@
-const prettyBytes = require("pretty-bytes");
 const chalk = require("chalk");
-const { getColor } = require("./getCurrentColor");
+
 const { fileStat, getChmod, transformUidToUser } = require("./tools");
 
-function getDirRowBase(temp, lastPath, nextPrePath, joinString, colorful) {
+/**
+ *
+ * @param {String} lastRe 已经得到的输出，包含所有之前遍历到的内容
+ * @param {String} currentPreString 当前待连接的前缀 如 |  |  |, 注意传入时需要slice(0, -1), 因为会和下面的joinString进行拼接
+ * @param {String} joinString 当前需要连接的字符串 如 |--
+ * @param {String} currentDirName 当前文件夹名称
+ * @param {Boolean} colorful 是否是彩色显示模式
+ */
+function getDirRowBase(
+  lastRe,
+  currentPreString,
+  joinString,
+  currentDirName,
+  colorful
+) {
   return new Promise((resolve) => {
-    temp += nextPrePath + joinString;
+    lastRe += currentPreString + joinString;
     if (colorful) {
-      temp += chalk.bgHex(getColor("", true, false)).bold(lastPath);
+      lastRe += chalk.blue(currentDirName);
     } else {
-      temp += lastPath;
+      lastRe += currentDirName;
     }
-    resolve(temp + "\n");
+    resolve(lastRe + "\n");
   });
 }
 
 function getDirRowEx(
-  temp,
-  currentPath,
-  lastPath,
-  nextPrePath,
-  nextPreExtendPath,
-  initPad,
+  lastRe,
+  currentDirPath,
+  currentDirName,
+  currentPreString,
+  currentPreExtendString,
   joinString,
-  size,
+  initPad,
   currentColor,
   isUnixMod
 ) {
   if (isUnixMod) {
     return getDirRowUnix(
-      temp,
-      currentPath,
-      lastPath,
-      nextPrePath,
-      nextPreExtendPath,
-      initPad,
+      lastRe,
+      currentDirPath,
+      currentDirName,
+      currentPreString,
+      currentPreExtendString,
       joinString,
-      size,
+      initPad,
       currentColor
     );
   } else {
     return getDirRowWindows(
-      temp,
-      currentPath,
-      lastPath,
-      nextPrePath,
-      nextPreExtendPath,
-      initPad,
+      lastRe,
+      currentDirPath,
+      currentDirName,
+      currentPreString,
+      currentPreExtendString,
       joinString,
-      size,
+      initPad,
       currentColor
     );
   }
 }
 
 function getDirRowWindows(
-  temp,
-  currentPath,
-  lastPath,
-  nextPrePath,
-  nextPreExtendPath,
-  initPad,
+  lastRe,
+  currentDirPath,
+  currentDirName,
+  currentPreString,
+  currentPreExtendString,
   joinString,
-  size,
+  initPad,
   currentColor
 ) {
-  return fileStat(currentPath).then((file) => {
-    let currentTemp = "";
-    currentTemp += `d${getChmod(file.mode)} `;
-    currentTemp += nextPrePath + joinString + lastPath;
+  return fileStat(currentDirPath).then((fileState) => {
+    let currentTemp = `d${getChmod(fileState.mode)} `;
+    currentTemp += currentPreString + joinString + currentDirName;
     currentTemp = currentTemp.padEnd(initPad);
-    currentTemp += nextPreExtendPath + joinString + prettyBytes(size);
+    currentTemp +=
+      currentPreExtendString +
+      joinString +
+      "&&--size-placeHolder-by-powerTree--&&";
     currentTemp = currentTemp.padEnd(10);
     if (currentColor) {
       currentTemp = chalk.hex(currentColor).bold(currentTemp);
     }
-    temp += currentTemp + "\n";
-    return temp;
+    lastRe += currentTemp + "\n";
+    return lastRe;
   });
 }
 
 function getDirRowUnix(
-  temp,
-  currentPath,
-  lastPath,
-  nextPrePath,
-  nextPreExtendPath,
-  initPad,
+  lastRe,
+  currentDirPath,
+  currentDirName,
+  currentPreString,
+  currentPreExtendString,
   joinString,
-  size,
+  initPad,
   currentColor
 ) {
   let currentTemp = "";
-  return fileStat(currentPath)
-    .then((file) => {
-      currentTemp += `d${getChmod(file.mode)} `;
-      currentTemp += nextPrePath + joinString + lastPath;
+  return fileStat(currentDirPath)
+    .then((fileState) => {
+      currentTemp += `d${getChmod(fileState.mode)} `;
+      currentTemp += currentPreString + joinString + currentDirName;
       currentTemp = currentTemp.padEnd(initPad);
-      currentTemp += nextPreExtendPath + joinString + prettyBytes(size);
+      // 使用占位符标记需要统计大小的地方，在当前层级的后续循环中进行填补
+      currentTemp +=
+        currentPreExtendString +
+        joinString +
+        "&&--size-placeHolder-by-powerTree--&&";
       currentTemp = currentTemp.padEnd(10);
-      return file.uid;
+      return { uid: fileState.uid, currentColor };
     })
     .then(transformUidToUser)
     .then((name) => {
       currentTemp += `  user: ${name}\n`;
       if (currentColor) {
-        temp += chalk.hex(currentColor).bold(currentTemp);
+        lastRe += chalk.hex(currentColor).bold(currentTemp);
       } else {
-        temp += currentTemp;
+        lastRe += currentTemp;
       }
-      return temp;
+      return lastRe;
     });
 }
 

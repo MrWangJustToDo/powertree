@@ -20,54 +20,37 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
   }
   initPad = Number(initPad);
   dir = path.resolve(dir);
+  // 当前文件夹全路径
+  let currentPath = dir;
+  // 当前文件夹名称
+  let currentName = path.basename(dir);
   return fileStat(dir)
     .then((file) => {
       if (file.isDirectory()) {
         if (extend) {
-          if (process.platform !== "win32") {
-            if (colorFlag) {
-              return getAllFileExtend(
-                "\n",
-                dir,
-                " ",
-                " ",
-                true,
-                true,
-                initPad,
-                getRandomColor()
-              );
-            } else {
-              return getAllFileExtend("\n", dir, " ", " ", true, true, initPad);
-            }
-          } else {
-            if (colorFlag) {
-              return getAllFileExtend(
-                "\n",
-                dir,
-                " ",
-                " ",
-                true,
-                false,
-                initPad,
-                getRandomColor()
-              );
-            } else {
-              return getAllFileExtend(
-                "\n",
-                dir,
-                " ",
-                " ",
-                true,
-                false,
-                initPad
-              );
-            }
-          }
+          return getAllFileExtend(
+            "\n",
+            currentPath,
+            currentName,
+            " ",
+            " ",
+            true,
+            process.platform !== "win32",
+            initPad,
+            colorFlag ? getRandomColor() : undefined,
+            {}
+          );
         } else {
           if (colorFlag) {
-            return getAllFileBaseColorful(".\n", dir, " ", true);
+            return getAllFileBaseColorful(
+              ".\n",
+              currentPath,
+              currentName,
+              " ",
+              true
+            );
           } else {
-            return getAllFileBase(".\n", dir, " ", true);
+            return getAllFileBase(".\n", currentPath, currentName, " ", true);
           }
         }
       } else {

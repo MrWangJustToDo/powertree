@@ -1,18 +1,8 @@
-const fileSize = require("nodejs-fs-utils");
 const fs = require("fs");
+const chalk = require("chalk");
 
 // userCache
 let userMap = {};
-
-// folder size
-function getFolderSize(path) {
-  return new Promise((resolve, reject) => {
-    fileSize.fsize(path, (err, size) => {
-      resolve(size);
-      reject(err);
-    });
-  });
-}
 
 // random color
 function getRandomColor() {
@@ -82,7 +72,7 @@ function getMod(para) {
 }
 
 // getUser
-function transformUidToUser(uid) {
+function transformUidToUser({ uid, currentColor }) {
   return new Promise((resolve, reject) => {
     if (uid in userMap) {
       resolve(userMap[uid]);
@@ -92,8 +82,10 @@ function transformUidToUser(uid) {
         for (let user of passwd) {
           let userArray = user.split(/:/g);
           if (userArray[2] == uid) {
-            userMap[uid] = userArray[0];
-            return resolve(userArray[0]);
+            userMap[uid] = currentColor
+              ? userArray[0]
+              : chalk.redBright(userArray[0]);
+            return resolve(userMap[uid]);
           }
         }
         userMap[uid] = "uid not found";
@@ -111,7 +103,6 @@ function execFileJudge(modStr) {
   }
 }
 
-exports.getFolderSize = getFolderSize;
 exports.getRandomColor = getRandomColor;
 exports.fileStat = fileStat();
 exports.readDir = readDir();
