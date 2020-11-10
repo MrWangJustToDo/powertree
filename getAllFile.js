@@ -74,7 +74,6 @@ function getAllFileBase(
         );
       })
       .catch((e) => {
-        console.log("出现错误", e);
         return lastReAddCurrentDir + currentPreString + isLast
           ? "└── ".padStart(7)
           : "├── ".padStart(7) + chalk.red("it look like something wrong\n");
