@@ -52,7 +52,7 @@ function getAllFileBase(
                 currentDirArr[i].name
               )
             );
-          } else {
+          } else if (currentDirArr[i].isDirectory()) {
             // 如果是文件夹，再使用当前规则处理，此时的相应参数会改变
             temp.push((currentRe) =>
               getAllFileBase(
@@ -74,12 +74,10 @@ function getAllFileBase(
         );
       })
       .catch((e) => {
-        return (
-          lastReAddCurrentDir +
-          currentPreString +
-          "└── ".padStart(7) +
-          chalk.red("it look like something wrong")
-        );
+        console.log("出现错误", e);
+        return lastReAddCurrentDir + currentPreString + isLast
+          ? "└── ".padStart(7)
+          : "├── ".padStart(7) + chalk.red("it look like something wrong\n");
       })
   );
 }
@@ -118,7 +116,7 @@ function getAllFileBaseColorful(
                 currentDirPath
               )
             );
-          } else {
+          } else if (currentDirArr[i].isDirectory()) {
             // 如果是文件夹，再使用当前规则处理，此时的相应参数会改变
             temp.push((currentRe) =>
               getAllFileBaseColorful(
@@ -139,12 +137,9 @@ function getAllFileBaseColorful(
         );
       })
       .catch((e) => {
-        return (
-          lastReAddCurrentDir +
-          currentPreString +
-          "└── ".padStart(7) +
-          chalk.red("it look like something wrong")
-        );
+        return lastReAddCurrentDir + currentPreString + isLast
+          ? "└── ".padStart(7)
+          : "├── ".padStart(7) + chalk.red("it look like something wrong\n");
       })
   );
 }
@@ -199,7 +194,7 @@ function getAllFileExtend(
                 return lastRe;
               })
             );
-          } else {
+          } else if (currentDirArr[i].isDirectory()) {
             temp.push((currentRe) =>
               getAllFileExtend(
                 currentRe,
@@ -244,12 +239,9 @@ function getAllFileExtend(
           });
       })
       .catch((e) => {
-        return (
-          lastReAddCurrentDir +
-          currentPreString +
-          "└── ".padStart(7) +
-          chalk.red("it look like something wrong")
-        );
+        return lastReAddCurrentDir + currentPreString + isLast
+          ? "└── ".padStart(7)
+          : "├── ".padStart(7) + chalk.red("it look like something wrong\n");
       })
   );
 }
