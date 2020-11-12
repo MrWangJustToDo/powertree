@@ -1,6 +1,6 @@
 exports.color = {
   folder: "#4169E1",
-  file: "#F0F8FF",
+  file: "#A9A9A9",
   execFile: "#2E8B57",
   zip: "#FF4500",
   extendFile: "#9932CC",
