@@ -74,9 +74,9 @@ function getAllFileBase(
         );
       })
       .catch((e) => {
-        return lastReAddCurrentDir + currentPreString + isLast
-          ? "└── ".padStart(7)
-          : "├── ".padStart(7) + chalk.red("it look like something wrong\n");
+        // console.log(e);s
+        return lastReAddCurrentDir + currentPreString +
+          "└── ".padStart(7) + chalk.red("it look like something wrong\n");
       })
   );
 }
@@ -136,9 +136,8 @@ function getAllFileBaseColorful(
         );
       })
       .catch((e) => {
-        return lastReAddCurrentDir + currentPreString + isLast
-          ? "└── ".padStart(7)
-          : "├── ".padStart(7) + chalk.red("it look like something wrong\n");
+        return lastReAddCurrentDir + currentPreString +
+          "└── ".padStart(7) + chalk.red("it look like something wrong\n");
       })
   );
 }
@@ -238,9 +237,8 @@ function getAllFileExtend(
           });
       })
       .catch((e) => {
-        return lastReAddCurrentDir + currentPreString + isLast
-          ? "└── ".padStart(7)
-          : "├── ".padStart(7) + chalk.red("it look like something wrong\n");
+        return lastReAddCurrentDir + currentPreString +
+          "└── ".padStart(7) + chalk.red("it look like something wrong\n");
       })
   );
 }
