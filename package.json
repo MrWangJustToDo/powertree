@@ -1,6 +1,6 @@
 {
   "name": "powertree",
-  "version": "1.0.14",
+  "version": "1.0.14-fix",
   "description": "more than tree",
   "main": "powerTree.js",
   "scripts": {
