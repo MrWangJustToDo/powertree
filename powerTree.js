@@ -27,6 +27,7 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
   return fileStat(dir)
     .then((file) => {
       if (file.isDirectory()) {
+        // 扩展显示模式，使用递归
         if (extend) {
           return getAllFileExtend(
             "\n",
@@ -41,28 +42,19 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             {}
           );
         } else {
+          // 普通显示模式，获取到的数据直接输出
+          console.log(".");
           if (colorFlag) {
-            return getAllFileBaseColorful(
-              ".\n",
-              currentPath,
-              currentName,
-              " ",
-              true
-            );
+            return getAllFileBaseColorful(currentPath, currentName, " ", true);
           } else {
-            return getAllFileBase(".\n", currentPath, currentName, " ", true);
+            return getAllFileBase(currentPath, currentName, " ", true);
           }
         }
       } else {
         return chalk.red("Path Must Be A Dir");
       }
     })
-    .then((temp) => {
-      return temp;
-    })
-    .catch((e) => {
-      return chalk.red("Path Not Exist Or Permission Denied");
-    });
+    .catch((e) => chalk.red("Path Not Exist Or Permission Denied"));
 }
 
 exports.listFiles = listFiles;

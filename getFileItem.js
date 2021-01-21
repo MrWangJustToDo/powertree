@@ -6,29 +6,26 @@ const { getColor } = require("./getCurrentColor");
 const { fileStat, getChmod, execFileJudge } = require("./tools");
 
 /**
- *
- * @param {String} lastRe 已经完成遍历输出的结果
+ * 普通模式输出
  * @param {String} currentPreString 当前文件输出的前缀，类似于| | | | 最后一个不需要取消，因为文件是当前文件夹的子项，会有额外前缀
  * @param {String} joinString 当前文件输出的连接字符串，类似于|--
  * @param {String} currentFileName 当前文件的名称
  */
-function getFileRowBase(lastRe, currentPreString, joinString, currentFileName) {
+function getFileRowBase(currentPreString, joinString, currentFileName) {
   return new Promise((resolve) => {
-    lastRe += currentPreString + joinString + currentFileName;
-    resolve(lastRe + "\n");
+    console.log(currentPreString + joinString + currentFileName);
+    resolve();
   });
 }
 
 /**
- *
- * @param {String} lastRe 已经完成遍历输出的结果
+ * 普通模式的彩色输出
  * @param {String} currentPreString 当前文件输出的前缀，类似于| | | | 最后一个不需要取消，因为文件是当前文件夹的子项，会有额外前缀
  * @param {String} joinString 当前文件输出的连接字符串，类似于|--
  * @param {String} currentFileName 当前文件的名称
  * @param {String} currentDirPath 当前文件所在文件夹的全路径
  */
 function getFileRowBaseColorful(
-  lastRe,
   currentPreString,
   joinString,
   currentFileName,
@@ -49,8 +46,7 @@ function getFileRowBaseColorful(
           .hex(getColor(currentFileName, false, false))
           .bold(currentFileName);
       }
-      lastRe += currentTemp;
-      return lastRe + "\n";
+      console.log(currentTemp);
     }
   );
 }
@@ -87,7 +83,7 @@ function getFileRowExtend(
         flag && (currentTemp += "*");
       }
       if (currentTemp.length > initPad) {
-        // 显示效果优化
+        // 超出显示优化
         currentTemp = currentTemp.slice(0, initPad - 3) + "...";
       }
       currentTemp = currentTemp.padEnd(initPad);

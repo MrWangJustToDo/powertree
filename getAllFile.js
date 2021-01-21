@@ -12,29 +12,24 @@ const { readDir, getRandomColor } = require("./tools");
 
 /**
  * 按照基础命令输出信息
- * @param {String} lastRe 已经执行输出的数据
  * @param {String} currentDirPath 当前文件夹全路径
  * @param {String} currentDirName 当前文件夹名称
  * @param {String} currentPreString 当前路径层级的连接字符串
  * @param {String} isLast 当前文件夹是否是当前层级的最后一个
  */
 function getAllFileBase(
-  lastRe,
   currentDirPath,
   currentDirName,
   currentPreString,
   isLast
 ) {
-  return new Promise((resolve) => {
-    // 添加当前文件夹信息
-    getDirRowBase(
-      lastRe,
-      currentPreString.slice(0, -1),
-      isLast ? "└── " : "├── ",
-      currentDirName,
-      false
-    ).then(resolve);
-  }).then((lastReAddCurrentDir) =>
+  // 添加当前文件夹信息
+  return getDirRowBase(
+    currentPreString.slice(0, -1),
+    isLast ? "└── " : "├── ",
+    currentDirName,
+    false
+  ).then(() =>
     // 遍历当前文件夹中所有内容
     readDir(currentDirPath, { withFileTypes: true })
       .then((currentDirArr) => {
@@ -42,9 +37,8 @@ function getAllFileBase(
         for (let i = 0; i < currentDirArr.length; i++) {
           // 如果目标是一个文件，按照文件的规则进行处理
           if (currentDirArr[i].isFile()) {
-            temp.push((currentRe) =>
+            temp.push(() =>
               getFileRowBase(
-                currentRe,
                 currentPreString,
                 i === currentDirArr.length - 1
                   ? "└── ".padStart(7)
@@ -54,9 +48,8 @@ function getAllFileBase(
             );
           } else if (currentDirArr[i].isDirectory()) {
             // 如果是文件夹，再使用当前规则处理，此时的相应参数会改变
-            temp.push((currentRe) =>
+            temp.push(() =>
               getAllFileBase(
-                currentRe,
                 path.join(currentDirPath, currentDirArr[i].name),
                 currentDirArr[i].name,
                 i === currentDirArr.length - 1
@@ -69,44 +62,42 @@ function getAllFileBase(
         }
         // 全部任务放入数组中，为了保证按照顺序执行，使用promise特性与数组的reduce实现
         return temp.reduce(
-          (pre, current) => pre.then((lastAdd) => current(lastAdd)),
-          Promise.resolve(lastReAddCurrentDir)
+          (pre, current) => pre.then(current),
+          Promise.resolve()
         );
       })
       .catch((e) => {
-        // console.log(e);s
-        return lastReAddCurrentDir + currentPreString +
-          "└── ".padStart(7) + chalk.red("it look like something wrong\n");
+        console.log(
+          lastReAddCurrentDir +
+            currentPreString +
+            "└── ".padStart(7) +
+            chalk.red("it look like something wrong\n")
+        );
       })
   );
 }
 
 // 基础命令的彩色输出
 function getAllFileBaseColorful(
-  lastRe,
   currentDirPath,
   currentDirName,
   currentPreString,
   isLast
 ) {
-  return new Promise((resolve) => {
-    getDirRowBase(
-      lastRe,
-      currentPreString.slice(0, -1),
-      isLast ? "└── " : "├── ",
-      currentDirName,
-      true
-    ).then(resolve);
-  }).then((lastReAddCurrentDir) =>
+  return getDirRowBase(
+    currentPreString.slice(0, -1),
+    isLast ? "└── " : "├── ",
+    currentDirName,
+    true
+  ).then(() =>
     readDir(currentDirPath, { withFileTypes: true })
       .then((currentDirArr) => {
         var temp = [];
         for (let i = 0; i < currentDirArr.length; i++) {
           // 如果目标是一个文件，按照文件的规则进行处理
           if (currentDirArr[i].isFile()) {
-            temp.push((currentRe) =>
+            temp.push(() =>
               getFileRowBaseColorful(
-                currentRe,
                 currentPreString,
                 i === currentDirArr.length - 1
                   ? "└── ".padStart(7)
@@ -117,9 +108,8 @@ function getAllFileBaseColorful(
             );
           } else if (currentDirArr[i].isDirectory()) {
             // 如果是文件夹，再使用当前规则处理，此时的相应参数会改变
-            temp.push((currentRe) =>
+            temp.push(() =>
               getAllFileBaseColorful(
-                currentRe,
                 path.join(currentDirPath, currentDirArr[i].name),
                 currentDirArr[i].name,
                 i === currentDirArr.length - 1
@@ -131,13 +121,17 @@ function getAllFileBaseColorful(
           }
         }
         return temp.reduce(
-          (pre, current) => pre.then((lastAdd) => current(lastAdd)),
-          Promise.resolve(lastReAddCurrentDir)
+          (pre, current) => pre.then(current),
+          Promise.resolve()
         );
       })
       .catch((e) => {
-        return lastReAddCurrentDir + currentPreString +
-          "└── ".padStart(7) + chalk.red("it look like something wrong\n");
+        console.log(
+          lastReAddCurrentDir +
+            currentPreString +
+            "└── ".padStart(7) +
+            chalk.red("it look like something wrong\n")
+        );
       })
   );
 }
@@ -237,8 +231,12 @@ function getAllFileExtend(
           });
       })
       .catch((e) => {
-        return lastReAddCurrentDir + currentPreString +
-          "└── ".padStart(7) + chalk.red("it look like something wrong\n");
+        return (
+          lastReAddCurrentDir +
+          currentPreString +
+          "└── ".padStart(7) +
+          chalk.red("it look like something wrong\n")
+        );
       })
   );
 }

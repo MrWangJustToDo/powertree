@@ -1,7 +1,33 @@
 #!/usr/bin/env node
 
-const powerTree = require("./powerTree.js");
+const fs = require("fs");
+const path = require("path");
 const yargs = require("yargs");
+const powerTree = require("./powerTree.js");
+
+// show version
+try {
+  if (Object.prototype.hasOwnProperty.call(yargs.argv, "v")) {
+    const json = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "package.json"))
+    );
+    console.log("version:", json.version);
+    return;
+  }
+} catch (e) {
+  console.error(
+    `miss 'package.json' file, pleace download powerTree again and do not delete this file`
+  );
+  return;
+}
+
+// show help
+if (Object.prototype.hasOwnProperty.call(yargs.argv, "h")) {
+  console.log(
+    "usage: p-tree [path] [number(padWidth)] [-c(colorful)] [-e(extend)]"
+  );
+  return;
+}
 
 if (Object.prototype.hasOwnProperty.call(yargs.argv, "c")) {
   if (Object.prototype.hasOwnProperty.call(yargs.argv, "e")) {
@@ -11,10 +37,13 @@ if (Object.prototype.hasOwnProperty.call(yargs.argv, "c")) {
       powerTree.listFiles(true, true, ...yargs.argv._).then(console.log);
     }
   } else {
+    console.time("search ~~ ");
     if (yargs.argv._.length == 0) {
-      powerTree.listFiles(true, false, ".").then(console.log);
+      powerTree.listFiles(true, false, ".").then(console.timeEnd("search ~~ "));
     } else {
-      powerTree.listFiles(true, false, ...yargs.argv._).then(console.log);
+      powerTree
+        .listFiles(true, false, ...yargs.argv._)
+        .then(console.timeEnd("search ~~ "));
     }
   }
 } else {
@@ -25,10 +54,15 @@ if (Object.prototype.hasOwnProperty.call(yargs.argv, "c")) {
       powerTree.listFiles(false, true, ...yargs.argv._).then(console.log);
     }
   } else {
+    console.time("search ~~ ");
     if (yargs.argv._.length == 0) {
-      powerTree.listFiles(false, false, ".").then(console.log);
+      powerTree
+        .listFiles(false, false, ".")
+        .then(console.timeEnd("search ~~ "));
     } else {
-      powerTree.listFiles(false, false, ...yargs.argv._).then(console.log);
+      powerTree
+        .listFiles(false, false, ...yargs.argv._)
+        .then(console.timeEnd("search ~~ "));
     }
   }
 }

@@ -3,28 +3,22 @@ const chalk = require("chalk");
 const { fileStat, getChmod, transformUidToUser } = require("./tools");
 
 /**
- *
- * @param {String} lastRe 已经得到的输出，包含所有之前遍历到的内容
+ * 普通模式输出
  * @param {String} currentPreString 当前待连接的前缀 如 |  |  |, 注意传入时需要slice(0, -1), 因为会和下面的joinString进行拼接
  * @param {String} joinString 当前需要连接的字符串 如 |--
  * @param {String} currentDirName 当前文件夹名称
  * @param {Boolean} colorful 是否是彩色显示模式
  */
-function getDirRowBase(
-  lastRe,
-  currentPreString,
-  joinString,
-  currentDirName,
-  colorful
-) {
+function getDirRowBase(currentPreString, joinString, currentDirName, colorful) {
   return new Promise((resolve) => {
-    lastRe += currentPreString + joinString;
+    let current = currentPreString + joinString;
     if (colorful) {
-      lastRe += chalk.blue(currentDirName);
+      current += chalk.blue(currentDirName);
     } else {
-      lastRe += currentDirName;
+      current += currentDirName;
     }
-    resolve(lastRe + "\n");
+    console.log(current);
+    resolve();
   });
 }
 
@@ -77,6 +71,10 @@ function getDirRowWindows(
   return fileStat(currentDirPath).then((fileState) => {
     let currentTemp = `d${getChmod(fileState.mode)} `;
     currentTemp += currentPreString + joinString + currentDirName;
+    if (currentTemp.length > initPad) {
+      // 超出显示优化
+      currentTemp = currentTemp.slice(0, initPad - 3) + "...";
+    }
     currentTemp = currentTemp.padEnd(initPad);
     currentTemp +=
       currentPreExtendString +
@@ -106,6 +104,10 @@ function getDirRowUnix(
     .then((fileState) => {
       currentTemp += `d${getChmod(fileState.mode)} `;
       currentTemp += currentPreString + joinString + currentDirName;
+      if (currentTemp.length > initPad) {
+        // 超出显示优化
+        currentTemp = currentTemp.slice(0, initPad - 3) + "...";
+      }
       currentTemp = currentTemp.padEnd(initPad);
       // 使用占位符标记需要统计大小的地方，在当前层级的后续循环中进行填补
       currentTemp +=
