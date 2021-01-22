@@ -39,11 +39,11 @@ if (Object.prototype.hasOwnProperty.call(yargs.argv, "c")) {
   } else {
     console.time("search ~~ ");
     if (yargs.argv._.length == 0) {
-      powerTree.listFiles(true, false, ".").then(console.timeEnd("search ~~ "));
+      powerTree.listFiles(true, false, ".").then(() => console.timeEnd("search ~~ "));
     } else {
       powerTree
         .listFiles(true, false, ...yargs.argv._)
-        .then(console.timeEnd("search ~~ "));
+        .then(() => console.timeEnd("search ~~ "));
     }
   }
 } else {
@@ -58,11 +58,11 @@ if (Object.prototype.hasOwnProperty.call(yargs.argv, "c")) {
     if (yargs.argv._.length == 0) {
       powerTree
         .listFiles(false, false, ".")
-        .then(console.timeEnd("search ~~ "));
+        .then(() => console.timeEnd("search ~~ "));
     } else {
       powerTree
         .listFiles(false, false, ...yargs.argv._)
-        .then(console.timeEnd("search ~~ "));
+        .then(() => console.timeEnd("search ~~ "));
     }
   }
 }
