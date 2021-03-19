@@ -51,10 +51,12 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
           }
         }
       } else {
-        return chalk.red("Path Must Be A Dir");
+        console.log(chalk.red("--Path Must Be A Dir--"));
       }
     })
-    .catch((e) => chalk.red("Path Not Exist Or Permission Denied"));
+    .catch((e) =>
+      console.log(chalk.red("--Path Not Exist Or Permission Denied--"))
+    );
 }
 
 exports.listFiles = listFiles;

@@ -108,5 +108,7 @@ function getFileRowExtend(
 }
 
 exports.getFileRowBase = getFileRowBase;
+
 exports.getFileRowBaseColorful = getFileRowBaseColorful;
+
 exports.getFileRowExtend = getFileRowExtend;

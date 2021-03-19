@@ -32,14 +32,18 @@ if (Object.prototype.hasOwnProperty.call(yargs.argv, "h")) {
 if (Object.prototype.hasOwnProperty.call(yargs.argv, "c")) {
   if (Object.prototype.hasOwnProperty.call(yargs.argv, "e")) {
     if (yargs.argv._.length == 0) {
-      powerTree.listFiles(true, true, ".").then(console.log);
+      powerTree.listFiles(true, true, ".").then((re) => re && console.log(re));
     } else {
-      powerTree.listFiles(true, true, ...yargs.argv._).then(console.log);
+      powerTree
+        .listFiles(true, true, ...yargs.argv._)
+        .then((re) => re && console.log(re));
     }
   } else {
     console.time("search ~~ ");
     if (yargs.argv._.length == 0) {
-      powerTree.listFiles(true, false, ".").then(() => console.timeEnd("search ~~ "));
+      powerTree
+        .listFiles(true, false, ".")
+        .then(() => console.timeEnd("search ~~ "));
     } else {
       powerTree
         .listFiles(true, false, ...yargs.argv._)
@@ -49,9 +53,11 @@ if (Object.prototype.hasOwnProperty.call(yargs.argv, "c")) {
 } else {
   if (Object.prototype.hasOwnProperty.call(yargs.argv, "e")) {
     if (yargs.argv._.length == 0) {
-      powerTree.listFiles(false, true, ".").then(console.log);
+      powerTree.listFiles(false, true, ".").then((re) => re && console.log(re));
     } else {
-      powerTree.listFiles(false, true, ...yargs.argv._).then(console.log);
+      powerTree
+        .listFiles(false, true, ...yargs.argv._)
+        .then((re) => re && console.log(re));
     }
   } else {
     console.time("search ~~ ");

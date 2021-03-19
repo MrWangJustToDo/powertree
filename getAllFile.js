@@ -2,13 +2,13 @@ const path = require("path");
 const chalk = require("chalk");
 const prettyBytes = require("pretty-bytes");
 
+const { readDir, getRandomColor } = require("./tools");
 const { getDirRowBase, getDirRowEx } = require("./getDirItem");
 const {
   getFileRowBase,
   getFileRowBaseColorful,
   getFileRowExtend,
 } = require("./getFileItem");
-const { readDir, getRandomColor } = require("./tools");
 
 /**
  * 按照基础命令输出信息
@@ -59,6 +59,18 @@ function getAllFileBase(
                   i === currentDirArr.length - 1
                 )
               );
+            } else {
+              temp.push(() =>
+                Promise.resolve(
+                  console.log(
+                    currentPreString +
+                      (i === currentDirArr.length - 1
+                        ? "└── ".padStart(7)
+                        : "├── ".padStart(7)) +
+                      chalk.red("look like not file or dir")
+                  )
+                )
+              );
             }
           }
           // 全部任务放入数组中，为了保证按照顺序执行，使用promise特性与数组的reduce实现
@@ -72,15 +84,15 @@ function getAllFileBase(
             lastReAddCurrentDir +
               currentPreString +
               "└── ".padStart(7) +
-              chalk.red("it look like something wrong\n")
+              chalk.red("look like something wrong")
           );
         })
     )
     .catch(() => {
       console.log(
-        currentPreString.slice(0, -1) + isLast
-          ? "└── "
-          : "├── " + chalk.red("it look like something wrong\n")
+        currentPreString.slice(0, -1) +
+          (isLast ? "└── " : "├── ") +
+          chalk.red("look like something wrong")
       );
     });
 }
@@ -127,6 +139,18 @@ function getAllFileBaseColorful(
                   i === currentDirArr.length - 1
                 )
               );
+            } else {
+              temp.push(() =>
+                Promise.resolve(
+                  console.log(
+                    currentPreString +
+                      (i === currentDirArr.length - 1
+                        ? "└── ".padStart(7)
+                        : "├── ".padStart(7)) +
+                      chalk.red("look like not file or dir")
+                  )
+                )
+              );
             }
           }
           return temp.reduce(
@@ -139,15 +163,15 @@ function getAllFileBaseColorful(
             lastReAddCurrentDir +
               currentPreString +
               "└── ".padStart(7) +
-              chalk.red("it look like something wrong\n")
+              chalk.red("look like something wrong")
           );
         })
     )
     .catch(() => {
       console.log(
-        currentPreString.slice(0, -1) + isLast
-          ? "└── "
-          : "├── " + chalk.red("it look like something wrong\n")
+        currentPreString.slice(0, -1) +
+          (isLast ? "└── " : "├── ") +
+          chalk.red("look like something wrong")
       );
     });
 }
@@ -225,9 +249,21 @@ function getAllFileExtend(
                   currentDirSize +=
                     dirSizeMap[
                       path.join(currentDirPath, currentDirArr[i].name)
-                    ];
+                    ] || 0;
                   return lastRe;
                 })
+              );
+            } else {
+              temp.push((currentRe) =>
+                Promise.resolve(
+                  currentRe +
+                    " ".padEnd(11) +
+                    currentPreString +
+                    (i === currentDirArr.length - 1
+                      ? "└── ".padStart(7)
+                      : "├── ".padStart(7)) +
+                    chalk.red("look like not file or dir\n")
+                )
               );
             }
           }
@@ -249,19 +285,23 @@ function getAllFileExtend(
               );
             });
         })
-        .catch((e) => {
+        .catch(() => {
           return (
             lastReAddCurrentDir +
-            currentPreString +
-            "└── ".padStart(7) +
-            chalk.red("it look like something wrong\n")
+            "".padEnd(10) +
+            currentPreString.slice(0, -1) +
+            " ├── ".padStart(4) +
+            chalk.red("look like something wrong") +
+            "\n"
           );
         })
     )
-    .catch(() =>
-      currentPreString.slice(0, -1) + isLast
-        ? "└── "
-        : "├── " + chalk.red("it look like something wrong\n")
+    .catch(
+      () =>
+        " ".padEnd(10) +
+        currentPreString.slice(0, -1) +
+        (isLast ? "└── " : "├── ") +
+        chalk.red("look like something wrong\n")
     );
 }
 
