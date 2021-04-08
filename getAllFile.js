@@ -88,12 +88,20 @@ function getAllFileBase(
           );
         })
     )
-    .catch(() => {
-      console.log(
-        currentPreString.slice(0, -1) +
-          (isLast ? "└── " : "├── ") +
-          chalk.red("look like something wrong")
-      );
+    .catch((e) => {
+      if (e === -1) {
+        console.log(
+          currentPreString +
+            "└── ".padStart(7) +
+            chalk.green("ignore current dir")
+        );
+      } else {
+        console.log(
+          currentPreString.slice(0, -1) +
+            (isLast ? "└── " : "├── ") +
+            chalk.red("look like something wrong")
+        );
+      }
     });
 }
 
@@ -167,12 +175,20 @@ function getAllFileBaseColorful(
           );
         })
     )
-    .catch(() => {
-      console.log(
-        currentPreString.slice(0, -1) +
-          (isLast ? "└── " : "├── ") +
-          chalk.red("look like something wrong")
-      );
+    .catch((e) => {
+      if (e === -1) {
+        console.log(
+          currentPreString +
+            "└── ".padStart(7) +
+            chalk.green("ignore current dir")
+        );
+      } else {
+        console.log(
+          currentPreString.slice(0, -1) +
+            (isLast ? "└── " : "├── ") +
+            chalk.red("look like something wrong")
+        );
+      }
     });
 }
 

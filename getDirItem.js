@@ -1,5 +1,6 @@
 const chalk = require("chalk");
 
+const { ignoreList } = require("./ignoreList");
 const { fileStat, getChmod, transformUidToUser } = require("./tools");
 
 /**
@@ -10,7 +11,7 @@ const { fileStat, getChmod, transformUidToUser } = require("./tools");
  * @param {Boolean} colorful 是否是彩色显示模式
  */
 function getDirRowBase(currentPreString, joinString, currentDirName, colorful) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let current = currentPreString + joinString;
     if (colorful) {
       current += chalk.blue(currentDirName);
@@ -18,7 +19,11 @@ function getDirRowBase(currentPreString, joinString, currentDirName, colorful) {
       current += currentDirName;
     }
     console.log(current);
-    resolve();
+    if (ignoreList[currentDirName]) {
+      reject(-1);
+    } else {
+      resolve();
+    }
   });
 }
 
