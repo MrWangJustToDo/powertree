@@ -12,6 +12,8 @@ const ignoreList = {
   ".android": 1,
   ".java": 1,
   maven: 1,
+  ".next": 1,
+  build: 1,
 };
 
 exports.ignoreList = ignoreList;
