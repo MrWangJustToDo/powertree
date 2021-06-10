@@ -9,7 +9,7 @@ function getRandomColor() {
   return "#" + Math.random().toString(16).slice(2, 5);
 }
 
-// transform function to promise
+// transform function from callback to promise
 function transformFunctionFromCBToP(func) {
   return function (...args) {
     return new Promise((resolve, reject) => {

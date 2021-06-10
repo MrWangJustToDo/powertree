@@ -36,7 +36,7 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             " ",
             " ",
             true,
-            process.platform === "linux",
+            false && process.platform === "linux",
             initPad,
             colorFlag ? getRandomColor() : undefined,
             {}

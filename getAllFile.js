@@ -8,6 +8,7 @@ const {
   getFileRowBase,
   getFileRowBaseColorful,
   getFileRowExtend,
+  catchErrorRowExtend,
 } = require("./getFileItem");
 
 /**
@@ -205,6 +206,7 @@ function getAllFileExtend(
   currentColor,
   dirSizeMap
 ) {
+  let currentDirSize = 0;
   return new Promise((resolve) => {
     getDirRowEx(
       lastRe,
@@ -217,108 +219,100 @@ function getAllFileExtend(
       currentColor,
       unixModule
     ).then(resolve);
-  })
-    .then((lastReAddCurrentDir) =>
-      readDir(currentDirPath, { withFileTypes: true })
-        .then((currentDirArr) => {
-          let temp = [];
-          let currentDirSize = 0;
-          for (let i = 0; i < currentDirArr.length; i++) {
-            if (currentDirArr[i].isFile()) {
-              temp.push((currentRe) =>
-                getFileRowExtend(
-                  currentRe,
-                  currentDirPath,
-                  currentDirArr[i].name,
-                  currentPreString,
-                  currentPreExtendString,
-                  i === currentDirArr.length - 1
-                    ? "└── ".padStart(7)
-                    : "├── ".padStart(7),
-                  initPad,
-                  currentColor
-                ).then(({ lastRe, size }) => {
-                  // 统计当前文件夹下文件的大小
-                  currentDirSize += size;
-                  return lastRe;
-                })
-              );
-            } else if (currentDirArr[i].isDirectory()) {
-              temp.push((currentRe) =>
-                getAllFileExtend(
-                  currentRe,
-                  path.join(currentDirPath, currentDirArr[i].name),
-                  currentDirArr[i].name,
-                  i !== currentDirArr.length - 1
-                    ? currentPreString + "│".padStart(4)
-                    : currentPreString + " ".padStart(4),
-                  i !== currentDirArr.length - 1
-                    ? currentPreExtendString + "│".padStart(4)
-                    : currentPreExtendString + " ".padStart(4),
-                  i === currentDirArr.length - 1,
-                  unixModule,
-                  initPad,
-                  currentColor ? getRandomColor() : undefined,
-                  dirSizeMap
-                ).then((lastRe) => {
-                  // 统计当前文件夹下文件夹的大小
-                  currentDirSize +=
-                    dirSizeMap[
-                      path.join(currentDirPath, currentDirArr[i].name)
-                    ] || 0;
-                  return lastRe;
-                })
-              );
-            } else {
-              temp.push((currentRe) =>
-                Promise.resolve(
-                  currentRe +
-                    " ".padEnd(11) +
-                    currentPreString +
-                    (i === currentDirArr.length - 1
-                      ? "└── ".padStart(7)
-                      : "├── ".padStart(7)) +
-                    chalk.red("look like not file or dir\n")
-                )
-              );
-            }
+  }).then((lastReAddCurrentDir) =>
+    readDir(currentDirPath, { withFileTypes: true })
+      .then((currentDirArr) => {
+        let temp = [];
+        for (let i = 0; i < currentDirArr.length; i++) {
+          if (currentDirArr[i].isFile()) {
+            temp.push((currentRe) =>
+              getFileRowExtend(
+                currentRe,
+                currentDirPath,
+                currentDirArr[i].name,
+                currentPreString,
+                currentPreExtendString,
+                i === currentDirArr.length - 1
+                  ? "└── ".padStart(7)
+                  : "├── ".padStart(7),
+                initPad,
+                currentColor
+              ).then(({ lastRe, size }) => {
+                // 统计当前文件夹下文件的大小
+                currentDirSize += size;
+                return lastRe;
+              })
+            );
+          } else if (currentDirArr[i].isDirectory()) {
+            temp.push((currentRe) =>
+              getAllFileExtend(
+                currentRe,
+                path.join(currentDirPath, currentDirArr[i].name),
+                currentDirArr[i].name,
+                i !== currentDirArr.length - 1
+                  ? currentPreString + "│".padStart(4)
+                  : currentPreString + " ".padStart(4),
+                i !== currentDirArr.length - 1
+                  ? currentPreExtendString + "│".padStart(4)
+                  : currentPreExtendString + " ".padStart(4),
+                i === currentDirArr.length - 1,
+                unixModule,
+                initPad,
+                currentColor ? getRandomColor() : undefined,
+                dirSizeMap
+              ).then((lastRe) => {
+                // 统计当前文件夹下文件夹的大小
+                currentDirSize +=
+                  dirSizeMap[
+                    path.join(currentDirPath, currentDirArr[i].name)
+                  ] || 0;
+                return lastRe;
+              })
+            );
+          } else {
+            temp.push((currentRe) =>
+              catchErrorRowExtend(
+                currentRe,
+                currentDirArr[i].name,
+                currentPreString,
+                currentPreExtendString,
+                i === currentDirArr.length - 1
+                  ? "└── ".padStart(7)
+                  : "├── ".padStart(7),
+                initPad,
+                currentColor
+              )
+            );
           }
-          return temp
-            .reduce(
-              (pre, current) => pre.then((lastAdd) => current(lastAdd)),
-              Promise.resolve(lastReAddCurrentDir)
-            )
-            .then((lastRe) => {
-              dirSizeMap[currentDirPath] = currentDirSize;
-              // 得到结果，替换当前文件夹大小的占位符
-              let index = lastRe.lastIndexOf(
-                "&&--size-placeHolder-by-powerTree--&&"
-              );
-              return (
-                lastRe.slice(0, index) +
-                prettyBytes(currentDirSize) +
-                lastRe.slice(index + 37)
-              );
-            });
-        })
-        .catch(() => {
-          return (
-            lastReAddCurrentDir +
-            "".padEnd(10) +
-            currentPreString.slice(0, -1) +
-            " ├── ".padStart(4) +
-            chalk.red("look like something wrong") +
-            "\n"
-          );
-        })
-    )
-    .catch(
-      () =>
-        " ".padEnd(10) +
-        currentPreString.slice(0, -1) +
-        (isLast ? "└── " : "├── ") +
-        chalk.red("look like something wrong\n")
-    );
+        }
+        return temp.reduce(
+          (pre, current) => pre.then((lastAdd) => current(lastAdd)),
+          Promise.resolve(lastReAddCurrentDir)
+        );
+      })
+      .catch(() =>
+        catchErrorRowExtend(
+          lastReAddCurrentDir,
+          currentDirName,
+          currentPreString.slice(0, -1),
+          currentPreExtendString.slice(0, -1),
+          isLast ? "└── " : "├── ",
+          initPad,
+          currentColor,
+          "look like something wrong"
+        )
+      )
+      .then((lastRe) => {
+        dirSizeMap[currentDirPath] = currentDirSize;
+        // 得到结果，替换当前文件夹大小的占位符
+        let index = lastRe.lastIndexOf("&&--size-placeHolder-by-powerTree--&&");
+        return (
+          lastRe.slice(0, index) +
+          prettyBytes(currentDirSize) +
+          lastRe.slice(index + 37)
+        );
+      })
+  );
 }
 
 exports.getAllFileBase = getAllFileBase;
