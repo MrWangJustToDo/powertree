@@ -2,7 +2,7 @@ const fs = require("fs");
 const chalk = require("chalk");
 
 // userCache
-let userMap = {};
+const userMap = {};
 
 // random color
 function getRandomColor() {
@@ -26,7 +26,7 @@ function transformFunctionFromCBToP(func) {
 
 // promise fs.stat
 function fileStat() {
-  if (fs.promises) {
+  if (fs.promises && typeof fs.promises === "object") {
     return fs.promises.stat;
   } else {
     return transformFunctionFromCBToP(fs.stat);
@@ -35,7 +35,7 @@ function fileStat() {
 
 // promise fs.readDir
 function readDir() {
-  if (fs.promises) {
+  if (fs.promises && typeof fs.promises === "object") {
     return fs.promises.readdir;
   } else {
     return transformFunctionFromCBToP(fs.readdir);
@@ -44,8 +44,8 @@ function readDir() {
 
 // get chmod
 function getChmod(para) {
-  let temp = para.toString(8);
-  let fileMod = temp.slice(temp.length - 3);
+  const temp = para.toString(8);
+  const fileMod = temp.slice(temp.length - 3);
   return getMod(fileMod[0]) + getMod(fileMod[1]) + getMod(fileMod[2]);
 }
 
@@ -68,6 +68,8 @@ function getMod(para) {
       return "rw-";
     case "7":
       return "rwx";
+    default:
+      return "xxx";
   }
 }
 
@@ -78,9 +80,9 @@ function transformUidToUser({ uid, currentColor }) {
       resolve(userMap[uid]);
     } else {
       fs.readFile("/etc/passwd", (err, data) => {
-        let passwd = data.toString().split("\n");
+        const passwd = data.toString().split("\n");
         for (let user of passwd) {
-          let userArray = user.split(/:/g);
+          const userArray = user.split(/:/g);
           if (userArray[2] == uid) {
             userMap[uid] = currentColor
               ? userArray[0]

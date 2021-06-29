@@ -7,47 +7,55 @@ const { fileStat, getChmod, execFileJudge } = require("./tools");
 
 /**
  * 普通模式输出
- * @param {String} currentPreString 当前文件输出的前缀，类似于| | | | 最后一个不需要取消，因为文件是当前文件夹的子项，会有额外前缀
- * @param {String} joinString 当前文件输出的连接字符串，类似于|--
+ * @param {String} currentDirName 当前文件所在文件夹的名称
  * @param {String} currentFileName 当前文件的名称
+ * @param {String} currentPreString 当前文件输出的前缀，类似于| | | | 最后一个不需要取消，因为文件是当前文件夹的子项，会有额外前缀
+ * @param {Boolean} colorful 当前显示是否是颜色模式
+ * @param {String} joinString 当前文件输出的连接字符串，类似于|--
  */
-function getFileRowBase(currentPreString, joinString, currentFileName) {
-  return new Promise((resolve) => {
-    console.log(currentPreString + joinString + currentFileName);
-    resolve();
-  });
+function getFileRowBase(
+  currentDirPath,
+  currentFileName,
+  currentPreString,
+  colorful,
+  joinString
+) {
+  if (!colorful) {
+    return Promise.resolve(
+      console.log(currentPreString + joinString + currentFileName)
+    );
+  } else {
+    return fileStat(path.join(currentDirPath, currentFileName)).then(
+      (currentFileState) => {
+        const mode = getChmod(currentFileState.mode);
+        const flag = execFileJudge(mode);
+        let currentTemp = currentPreString + joinString;
+        if (flag) {
+          currentTemp += chalk
+            .hex(getColor(currentFileName, false, true))
+            .bold(currentFileName + "*");
+        } else {
+          currentTemp += chalk
+            .hex(getColor(currentFileName, false, false))
+            .bold(currentFileName);
+        }
+        console.log(currentTemp);
+      }
+    );
+  }
 }
 
-/**
- * 普通模式的彩色输出
- * @param {String} currentPreString 当前文件输出的前缀，类似于| | | | 最后一个不需要取消，因为文件是当前文件夹的子项，会有额外前缀
- * @param {String} joinString 当前文件输出的连接字符串，类似于|--
- * @param {String} currentFileName 当前文件的名称
- * @param {String} currentDirPath 当前文件所在文件夹的全路径
- */
-function getFileRowBaseColorful(
+function catchErrorRowBase(
+  currentDirPath,
   currentPreString,
   joinString,
-  currentFileName,
-  currentDirPath
+  error = "look like not file or dir"
 ) {
-  // 因为用到了额外的promise，因此将getFileRowBaseColorful单独分离为一个函数
-  return fileStat(path.join(currentDirPath, currentFileName)).then(
-    (currentFileState) => {
-      let mode = getChmod(currentFileState.mode);
-      let flag = execFileJudge(mode);
-      let currentTemp = currentPreString + joinString;
-      if (flag) {
-        currentTemp += chalk
-          .hex(getColor(currentFileName, false, true))
-          .bold(currentFileName + "*");
-      } else {
-        currentTemp += chalk
-          .hex(getColor(currentFileName, false, false))
-          .bold(currentFileName);
-      }
-      console.log(currentTemp);
-    }
+  console.log(
+    currentPreString +
+      joinString +
+      chalk.red(`${error}, path: `) +
+      chalk.blue(currentDirPath)
   );
 }
 
@@ -73,10 +81,10 @@ function getFileRowExtend(
   initPad,
   currentColor
 ) {
-  return fileStat(path.join(currentDirPath, currentFileName))
-    .then((fileState) => {
-      let mode = getChmod(fileState.mode);
-      let flag = execFileJudge(mode);
+  return fileStat(path.join(currentDirPath, currentFileName)).then(
+    (fileState) => {
+      const mode = getChmod(fileState.mode);
+      const flag = execFileJudge(mode);
       let currentTemp = `-${mode} `;
       currentTemp += currentPreString + joinString + currentFileName;
       if (currentColor) {
@@ -101,19 +109,8 @@ function getFileRowExtend(
       }
       lastRe += currentTemp;
       return { lastRe, size: fileState.size };
-    })
-    .catch(() =>
-      catchErrorRowExtend(
-        lastRe,
-        currentFileName,
-        currentPreString,
-        currentPreExtendString,
-        joinString,
-        initPad,
-        currentColor,
-        "look like something wrong"
-      )
-    );
+    }
+  );
 }
 
 /**
@@ -154,7 +151,7 @@ function catchErrorRowExtend(
 
 exports.getFileRowBase = getFileRowBase;
 
-exports.getFileRowBaseColorful = getFileRowBaseColorful;
+exports.catchErrorRowBase = catchErrorRowBase;
 
 exports.getFileRowExtend = getFileRowExtend;
 

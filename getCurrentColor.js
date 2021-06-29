@@ -14,7 +14,7 @@ function getColor(currentName, isDir, canExec) {
     if (canExec) {
       return color["execFile"];
     } else {
-      let type = mime.contentType(currentName);
+      const type = mime.contentType(currentName);
       try {
         if (type in zipFile) {
           return color["zip"];

@@ -2,12 +2,16 @@ const path = require("path");
 const chalk = require("chalk");
 const process = require("process");
 const { getRandomColor, fileStat } = require("./tools");
-const {
-  getAllFileBase,
-  getAllFileBaseColorful,
-  getAllFileExtend,
-} = require("./getAllFile");
+const { getAllFileBase, getAllFileExtend } = require("./getAllFile");
 
+/**
+ * 入口函数
+ * @param {Boolean} colorFlag -c 颜色模式
+ * @param {Boolean} extend -e 扩展模式
+ * @param {String} dir 当前遍历文件夹
+ * @param {Number} initPad 扩展模式下的两列内容的间距
+ * @returns {Promise}
+ */
 function listFiles(colorFlag, extend, dir, initPad = 65) {
   let temp = initPad;
   if (!isNaN(dir)) {
@@ -21,9 +25,9 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
   initPad = Number(initPad);
   dir = path.resolve(dir);
   // 当前文件夹全路径
-  let currentPath = dir;
+  const currentPath = dir;
   // 当前文件夹名称
-  let currentName = path.basename(dir);
+  const currentName = path.basename(dir);
   return fileStat(dir)
     .then((file) => {
       if (file.isDirectory()) {
@@ -44,17 +48,19 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
         } else {
           // 普通显示模式，获取到的数据直接输出
           console.log(".");
-          if (colorFlag) {
-            return getAllFileBaseColorful(currentPath, currentName, " ", true);
-          } else {
-            return getAllFileBase(currentPath, currentName, " ", true);
-          }
+          return getAllFileBase(
+            currentPath,
+            currentName,
+            " ",
+            !!colorFlag,
+            true
+          );
         }
       } else {
-        console.log(chalk.red("--Path Must Be A Dir--"));
+        console.log(chalk.red("--Input Path Must Be A Dir--"));
       }
     })
-    .catch((e) =>
+    .catch(() =>
       console.log(chalk.red("--Path Not Exist Or Permission Denied--"))
     );
 }
