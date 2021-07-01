@@ -43,7 +43,8 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             process.platform === "linux",
             initPad,
             colorFlag ? getRandomColor() : undefined,
-            {}
+            {},
+            true
           );
         } else {
           // 普通显示模式，获取到的数据直接输出
