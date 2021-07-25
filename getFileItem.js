@@ -63,7 +63,7 @@ function catchErrorRowBase(
  *
  * @param {String} lastRe 之前的输出返回
  * @param {String} currentDirPath 当前文件夹全路径
- * @param {String} currentFileName 当前文件夹名称
+ * @param {String} currentFileName 当前文件名称
  * @param {String} currentPreString 当前层级的文件前缀
  * @param {String} currentPreExtendString 当前层级的扩展前缀
  * @param {String} joinString 当前层级连接字符串
@@ -81,6 +81,8 @@ function getFileRowExtend(
   initPad,
   currentColor
 ) {
+  process.stdout.cursorTo(0);
+  process.stdout.write(currentDirPath + currentFileName);
   return fileStat(path.join(currentDirPath, currentFileName)).then(
     (fileState) => {
       const mode = getChmod(fileState.mode);
@@ -116,7 +118,8 @@ function getFileRowExtend(
 /**
  *
  * @param {String} lastRe 之前的输出返回
- * @param {String} currentFileName 当前文件夹名称
+ * @param {String} currentDirPath 当前文件夹全路径
+ * @param {String} currentFileName 当前文件名称
  * @param {String} currentPreString 当前层级的文件前缀
  * @param {String} currentPreExtendString 当前层级的扩展前缀
  * @param {String} joinString 当前层级连接字符串
@@ -126,6 +129,7 @@ function getFileRowExtend(
  */
 function catchErrorRowExtend(
   lastRe,
+  currentDirPath,
   currentFileName,
   currentPreString,
   currentPreExtendString,
@@ -134,6 +138,8 @@ function catchErrorRowExtend(
   currentColor,
   error = "look like not file or dir"
 ) {
+  process.stdout.cursorTo(0);
+  process.stdout.write(currentDirPath + currentFileName);
   let currentTemp = "xxxxxxxxxx ";
   currentTemp += currentPreString + joinString + currentFileName;
   if (currentTemp.length > initPad) {

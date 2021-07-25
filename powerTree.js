@@ -43,9 +43,14 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             process.platform === "linux",
             initPad,
             colorFlag ? getRandomColor() : undefined,
-            {},
-            true
-          );
+            {}
+          ).then((all) => {
+            process.stdout.cursorTo(0);
+            process.stdout.write("list done ~~");
+            process.stdout.clearLine(1);
+            console.log("");
+            return all;
+          });
         } else {
           // 普通显示模式，获取到的数据直接输出
           console.log(".");

@@ -113,11 +113,9 @@ function getAllFileExtend(
   unixModule,
   initPad,
   currentColor,
-  dirSizeMap,
-  isFirst
+  dirSizeMap
 ) {
   let currentDirSize = 0;
-  let timmerId;
   return getDirRowEx(
     lastRe,
     currentDirPath,
@@ -181,6 +179,7 @@ function getAllFileExtend(
           temp.push((currentRe) =>
             catchErrorRowExtend(
               currentRe,
+              currentDirPath,
               currentDirItemArr[i].name,
               currentPreString,
               currentPreExtendString,
@@ -193,41 +192,16 @@ function getAllFileExtend(
           );
         }
       }
-      if (isFirst) {
-        const allLength = temp.length - 1;
-        return temp
-          .reduce(
-            (pre, current, i) =>
-              pre
-                .then((lastAdd) => current(lastAdd))
-                .then((lastAdd) => {
-                  clearTimeout(timmerId);
-                  if (i === allLength) {
-                    timmerId = setTimeout(() => {
-                      process.stdout.write("100%\n");
-                    }, 100);
-                  } else {
-                    timmerId = setTimeout(() => {
-                      process.stdout.write(
-                        parseInt((i * 100) / allLength) + "% "
-                      );
-                    }, 100);
-                  }
-                  return lastAdd;
-                }),
-            Promise.resolve(lastRe)
-          )
-          .then((re) => (clearTimeout(timmerId), re));
-      } else {
-        return temp.reduce(
-          (pre, current) => pre.then((lastAdd) => current(lastAdd)),
-          Promise.resolve(lastRe)
-        );
-      }
+
+      return temp.reduce(
+        (pre, current) => pre.then(current),
+        Promise.resolve(lastRe)
+      );
     })
     .catch(() => {
       return catchErrorRowExtend(
         lastRe,
+        currentDirPath,
         currentDirName,
         currentPreString.slice(0, -1),
         currentPreExtendString.slice(0, -1),

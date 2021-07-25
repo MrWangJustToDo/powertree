@@ -104,6 +104,8 @@ function getDirRowWindows(
   initPad,
   currentColor
 ) {
+  process.stdout.cursorTo(0);
+  process.stdout.write(currentDirPath + currentDirName);
   return fileStat(currentDirPath).then((fileState) => {
     let currentTemp = `d${getChmod(fileState.mode)} `;
     currentTemp += currentPreString + joinString + currentDirName;
@@ -136,6 +138,8 @@ function getDirRowUnix(
   currentColor
 ) {
   let currentTemp = "";
+  process.stdout.cursorTo(0);
+  process.stdout.write(currentDirPath + currentDirName);
   return fileStat(currentDirPath)
     .then((fileState) => {
       currentTemp += `d${getChmod(fileState.mode)} `;
