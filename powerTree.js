@@ -45,9 +45,9 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             colorFlag ? getRandomColor() : undefined,
             {}
           ).then((all) => {
-            process.stdout.cursorTo(0);
-            process.stdout.write("list done ~~");
-            process.stdout.clearLine(1);
+            process.stderr.cursorTo(0);
+            process.stderr.write("list done ~~");
+            process.stderr.clearLine(1);
             console.log("");
             return all;
           });

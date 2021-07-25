@@ -81,8 +81,6 @@ function getFileRowExtend(
   initPad,
   currentColor
 ) {
-  process.stdout.cursorTo(0);
-  process.stdout.write(currentDirPath + currentFileName);
   return fileStat(path.join(currentDirPath, currentFileName)).then(
     (fileState) => {
       const mode = getChmod(fileState.mode);
@@ -138,8 +136,6 @@ function catchErrorRowExtend(
   currentColor,
   error = "look like not file or dir"
 ) {
-  process.stdout.cursorTo(0);
-  process.stdout.write(currentDirPath + currentFileName);
   let currentTemp = "xxxxxxxxxx ";
   currentTemp += currentPreString + joinString + currentFileName;
   if (currentTemp.length > initPad) {
