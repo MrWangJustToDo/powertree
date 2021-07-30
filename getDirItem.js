@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 
 const { ignoreList } = require("./ignoreList");
-const { readDir, fileStat, getChmod, transformUidToUser } = require("./tools");
+const { readDir, fileStat, getChmod, transformUidToUser, flushItem } = require("./tools");
 
 /**
  * 普通模式输出
@@ -104,9 +104,7 @@ function getDirRowWindows(
   initPad,
   currentColor
 ) {
-  process.stderr.cursorTo(0);
-  process.stderr.clearLine(1);
-  process.stderr.write(currentDirName);
+  flushItem(currentDirName)
   return fileStat(currentDirPath).then((fileState) => {
     let currentTemp = `d${getChmod(fileState.mode)} `;
     currentTemp += currentPreString + joinString + currentDirName;
@@ -139,9 +137,7 @@ function getDirRowUnix(
   currentColor
 ) {
   let currentTemp = "";
-  process.stderr.cursorTo(0);
-  process.stderr.clearLine(1);
-  process.stderr.write(currentDirName);
+  flushItem(currentDirName);
   return fileStat(currentDirPath)
     .then((fileState) => {
       currentTemp += `d${getChmod(fileState.mode)} `;

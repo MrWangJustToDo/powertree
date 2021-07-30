@@ -105,9 +105,23 @@ function execFileJudge(modStr) {
   }
 }
 
+function flushItem(message) {
+  if (process && process.stderr) {
+    const len = process.stderr.columns;
+    process.stderr.cursorTo(0);
+    process.stderr.clearLine(1);
+    if (message.length <= len) {
+      process.stderr.write(message);
+    } else {
+      process.stderr.write(message.slice(0, len));
+    }
+  }
+}
+
 exports.getRandomColor = getRandomColor;
 exports.fileStat = fileStat();
 exports.readDir = readDir();
 exports.getChmod = getChmod;
 exports.transformUidToUser = transformUidToUser;
 exports.execFileJudge = execFileJudge;
+exports.flushItem = flushItem;

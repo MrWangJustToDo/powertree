@@ -1,7 +1,7 @@
 const path = require("path");
 const chalk = require("chalk");
 const process = require("process");
-const { getRandomColor, fileStat } = require("./tools");
+const { getRandomColor, fileStat, flushItem } = require("./tools");
 const { getAllFileBase, getAllFileExtend } = require("./getAllFile");
 
 /**
@@ -45,9 +45,7 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             colorFlag ? getRandomColor() : undefined,
             {}
           ).then((all) => {
-            process.stderr.cursorTo(0);
-            process.stderr.write("list done ~~");
-            process.stderr.clearLine(1);
+            flushItem('list done ~~');
             console.log("");
             return all;
           });
