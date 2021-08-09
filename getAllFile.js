@@ -2,6 +2,7 @@ const path = require("path");
 const prettyBytes = require("pretty-bytes");
 
 const { getRandomColor } = require("./tools");
+const { ignoreList } = require("./ignoreList");
 const { getDirRowBase, getDirRowEx } = require("./getDirItem");
 const {
   getFileRowBase,
@@ -129,67 +130,85 @@ function getAllFileExtend(
   )
     .then(({ lastRe, currentDirItemArr }) => {
       const temp = [];
-      for (let i = 0; i < currentDirItemArr.length; i++) {
-        if (currentDirItemArr[i].isFile()) {
-          temp.push((currentRe) =>
-            getFileRowExtend(
-              currentRe,
-              currentDirPath,
-              currentDirItemArr[i].name,
-              currentPreString,
-              currentPreExtendString,
-              i === currentDirItemArr.length - 1
-                ? "└── ".padStart(7)
-                : "├── ".padStart(7),
-              initPad,
-              currentColor
-            ).then(({ lastRe, size }) => {
-              // 统计当前文件夹下文件的大小
-              currentDirSize += size;
-              return lastRe;
-            })
-          );
-        } else if (currentDirItemArr[i].isDirectory()) {
-          temp.push((currentRe) =>
-            getAllFileExtend(
-              currentRe,
-              path.join(currentDirPath, currentDirItemArr[i].name),
-              currentDirItemArr[i].name,
-              i !== currentDirItemArr.length - 1
-                ? currentPreString + "│".padStart(4)
-                : currentPreString + " ".padStart(4),
-              i !== currentDirItemArr.length - 1
-                ? currentPreExtendString + "│".padStart(4)
-                : currentPreExtendString + " ".padStart(4),
-              i === currentDirItemArr.length - 1,
-              unixModule,
-              initPad,
-              currentColor ? getRandomColor() : undefined,
-              dirSizeMap
-            ).then((lastRe) => {
-              // 统计当前文件夹下文件夹的大小
-              currentDirSize +=
-                dirSizeMap[
-                  path.join(currentDirPath, currentDirItemArr[i].name)
-                ] || 0;
-              return lastRe;
-            })
-          );
-        } else {
-          temp.push((currentRe) =>
-            catchErrorRowExtend(
-              currentRe,
-              currentDirPath,
-              currentDirItemArr[i].name,
-              currentPreString,
-              currentPreExtendString,
-              i === currentDirItemArr.length - 1
-                ? "└── ".padStart(7)
-                : "├── ".padStart(7),
-              initPad,
-              currentColor
-            )
-          );
+      if (ignoreList[currentDirName]) {
+        temp.push((lastRe) =>
+          catchErrorRowExtend(
+            lastRe,
+            currentDirPath,
+            `containing ${currentDirItemArr.length} ${
+              currentDirItemArr.length > 1 ? "items" : "item"
+            }`,
+            currentPreString,
+            currentPreExtendString,
+            "└── ".padStart(7),
+            initPad,
+            currentColor,
+            "ignore current dir"
+          )
+        );
+      } else {
+        for (let i = 0; i < currentDirItemArr.length; i++) {
+          if (currentDirItemArr[i].isFile()) {
+            temp.push((currentRe) =>
+              getFileRowExtend(
+                currentRe,
+                currentDirPath,
+                currentDirItemArr[i].name,
+                currentPreString,
+                currentPreExtendString,
+                i === currentDirItemArr.length - 1
+                  ? "└── ".padStart(7)
+                  : "├── ".padStart(7),
+                initPad,
+                currentColor
+              ).then(({ lastRe, size }) => {
+                // 统计当前文件夹下文件的大小
+                currentDirSize += size;
+                return lastRe;
+              })
+            );
+          } else if (currentDirItemArr[i].isDirectory()) {
+            temp.push((currentRe) =>
+              getAllFileExtend(
+                currentRe,
+                path.join(currentDirPath, currentDirItemArr[i].name),
+                currentDirItemArr[i].name,
+                i !== currentDirItemArr.length - 1
+                  ? currentPreString + "│".padStart(4)
+                  : currentPreString + " ".padStart(4),
+                i !== currentDirItemArr.length - 1
+                  ? currentPreExtendString + "│".padStart(4)
+                  : currentPreExtendString + " ".padStart(4),
+                i === currentDirItemArr.length - 1,
+                unixModule,
+                initPad,
+                currentColor ? getRandomColor() : undefined,
+                dirSizeMap
+              ).then((lastRe) => {
+                // 统计当前文件夹下文件夹的大小
+                currentDirSize +=
+                  dirSizeMap[
+                    path.join(currentDirPath, currentDirItemArr[i].name)
+                  ] || 0;
+                return lastRe;
+              })
+            );
+          } else {
+            temp.push((currentRe) =>
+              catchErrorRowExtend(
+                currentRe,
+                currentDirPath,
+                currentDirItemArr[i].name,
+                currentPreString,
+                currentPreExtendString,
+                i === currentDirItemArr.length - 1
+                  ? "└── ".padStart(7)
+                  : "├── ".padStart(7),
+                initPad,
+                currentColor
+              )
+            );
+          }
         }
       }
 

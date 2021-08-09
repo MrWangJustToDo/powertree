@@ -113,7 +113,7 @@ function flushItem(message) {
     if (message.length <= len) {
       process.stderr.write(message);
     } else {
-      process.stderr.write(message.slice(0, len));
+      process.stderr.write(message.slice(0, len - 3) + '...');
     }
   }
 }

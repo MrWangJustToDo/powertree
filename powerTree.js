@@ -45,8 +45,7 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             colorFlag ? getRandomColor() : undefined,
             {}
           ).then((all) => {
-            flushItem('list done ~~');
-            console.log("");
+            flushItem('list done ~~\n');
             return all;
           });
         } else {
@@ -61,7 +60,7 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
           );
         }
       } else {
-        console.log(chalk.red("--Input Path Must Be A Dir--"));
+        console.log(chalk.red("--Input Path Must be a Dir--"));
       }
     })
     .catch(() =>
