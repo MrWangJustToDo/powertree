@@ -15,5 +15,5 @@ $ npm i -g powertree
 ### Use
 
 ```shell
-p-tree [path] [number(padWidth)] [-c(colorful)] [-e(extend)] [-h(help)] [-v(version)]
+p-tree [path(default .)] [number(padWidth)] [-c(colorful)] [-e(extend)] [-h(help)] [-v(version)]
 ```

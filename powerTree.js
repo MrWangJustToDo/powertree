@@ -32,6 +32,7 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
     .then((file) => {
       if (file.isDirectory()) {
         // 扩展显示模式，使用递归
+        console.time("search ~~");
         if (extend) {
           return getAllFileExtend(
             "\n",
@@ -44,10 +45,13 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             initPad,
             colorFlag ? getRandomColor() : undefined,
             {}
-          ).then((all) => {
-            flushItem('list done ~~\n');
-            return all;
-          });
+          )
+            .then((all) => {
+              flushItem("");
+              console.timeEnd("search ~~");
+              return all;
+            })
+            .then(console.log);
         } else {
           // 普通显示模式，获取到的数据直接输出
           console.log(".");
@@ -57,7 +61,7 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             " ",
             !!colorFlag,
             true
-          );
+          ).then(() => console.timeEnd("search ~~"));
         }
       } else {
         console.log(chalk.red("--Input Path Must be a Dir--"));

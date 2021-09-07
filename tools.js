@@ -105,15 +105,17 @@ function execFileJudge(modStr) {
   }
 }
 
-function flushItem(message) {
-  if (process && process.stderr) {
-    const len = process.stderr.columns;
-    process.stderr.cursorTo(0);
-    process.stderr.clearLine(1);
-    if (message.length <= len) {
-      process.stderr.write(message);
-    } else {
-      process.stderr.write(message.slice(0, len - 3) + '...');
+function flushItem(message, dug = false) {
+  if (!dug) {
+    if (process && process.stderr) {
+      const len = process.stderr.columns;
+      process.stderr.cursorTo(0);
+      process.stderr.clearLine(1);
+      if (message.length <= len) {
+        process.stderr.write(message);
+      } else {
+        process.stderr.write(message.slice(0, len - 3) + "...");
+      }
     }
   }
 }

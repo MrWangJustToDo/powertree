@@ -135,9 +135,9 @@ function getAllFileExtend(
           catchErrorRowExtend(
             lastRe,
             currentDirPath,
-            `containing ${currentDirItemArr.length} ${
-              currentDirItemArr.length > 1 ? "items" : "item"
-            }`,
+            currentDirItemArr.length > 1
+              ? `includes ${currentDirItemArr.length} items`
+              : "include 1 item",
             currentPreString,
             currentPreExtendString,
             "└── ".padStart(7),
@@ -212,13 +212,12 @@ function getAllFileExtend(
         }
       }
 
-      return temp.reduce(
-        (pre, current) => pre.then(current),
-        Promise.resolve(lastRe)
-      );
+      return temp
+        .reduce((pre, current) => pre.then(current), Promise.resolve(lastRe))
+        .then((lastRe) => ({ lastRe }));
     })
     .catch(() => {
-      return catchErrorRowExtend(
+      const lastRewithCatch = catchErrorRowExtend(
         lastRe,
         currentDirPath,
         currentDirName,
@@ -229,20 +228,26 @@ function getAllFileExtend(
         currentColor,
         "can not open current dir"
       );
+      return { lastRe: lastRewithCatch, error: 1 };
     })
-    .then((lastRe) => {
+    .then(({ lastRe, error }) => {
       dirSizeMap[currentDirPath] = currentDirSize;
-      // 得到结果，替换当前文件夹大小的占位符
-      const index = lastRe.lastIndexOf("&&--size-placeHolder-by-powerTree--&&");
-      if (index !== -1) {
-        return (
-          lastRe.slice(0, index) +
-          prettyBytes(currentDirSize) +
-          lastRe.slice(index + 37)
+      if (!error) {
+        // 得到结果，替换当前文件夹大小的占位符
+        const index = lastRe.lastIndexOf(
+          "&&--size-placeHolder-by-powerTree--&&"
         );
-      } else {
-        return lastRe;
+        if (index !== -1) {
+          return (
+            lastRe.slice(0, index) +
+            prettyBytes(currentDirSize) +
+            lastRe.slice(index + 37)
+          );
+        } else {
+          return lastRe;
+        }
       }
+      return lastRe;
     });
 }
 
