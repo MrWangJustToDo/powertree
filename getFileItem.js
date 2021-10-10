@@ -91,8 +91,12 @@ function getFileRowExtend(
         flag && (currentTemp += "*");
       }
       if (currentTemp.length > initPad) {
-        // 超出显示优化
-        currentTemp = currentTemp.slice(0, initPad - 3) + "...";
+        if (initPad < 3) {
+          currentTemp = ".".repeat(initPad);
+        } else {
+          // 超出显示优化
+          currentTemp = currentTemp.slice(0, initPad - 3) + "...";
+        }
       }
       currentTemp = currentTemp.padEnd(initPad);
       currentTemp += currentPreExtendString + joinString;
@@ -139,7 +143,11 @@ function catchErrorRowExtend(
   let currentTemp = "xxxxxxxxxx ";
   currentTemp += currentPreString + joinString + currentFileName;
   if (currentTemp.length > initPad) {
-    currentTemp = currentTemp.slice(0, initPad - 3) + "...";
+    if (initPad < 3) {
+      currentTemp = ".".repeat(initPad);
+    } else {
+      currentTemp = currentTemp.slice(0, initPad - 3) + "...";
+    }
   }
   currentTemp = currentTemp.padEnd(initPad);
   currentTemp += currentPreExtendString + joinString;

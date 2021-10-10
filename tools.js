@@ -1,12 +1,19 @@
 const fs = require("fs");
 const chalk = require("chalk");
 
-// userCache
-const userMap = {};
-
 // random color
 function getRandomColor() {
   return "#" + Math.random().toString(16).slice(2, 5);
+}
+
+function cache(fn) {
+  const map = {};
+  return function (key) {
+    if (!map[key]) {
+      map[key] = fn(key);
+    }
+    return map[key];
+  };
 }
 
 // transform function from callback to promise
@@ -73,6 +80,9 @@ function getMod(para) {
   }
 }
 
+// userCache
+const userMap = {};
+
 // getUser
 function transformUidToUser({ uid, currentColor }) {
   return new Promise((resolve, reject) => {
@@ -123,7 +133,8 @@ function flushItem(message, dug = false) {
 exports.getRandomColor = getRandomColor;
 exports.fileStat = fileStat();
 exports.readDir = readDir();
-exports.getChmod = getChmod;
+exports.getChmod = cache(getChmod);
 exports.transformUidToUser = transformUidToUser;
-exports.execFileJudge = execFileJudge;
+exports.execFileJudge = cache(execFileJudge);
 exports.flushItem = flushItem;
+exports.cache = cache;

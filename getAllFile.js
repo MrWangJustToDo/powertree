@@ -217,7 +217,7 @@ function getAllFileExtend(
         .then((lastRe) => ({ lastRe }));
     })
     .catch(() => {
-      const lastRewithCatch = catchErrorRowExtend(
+      const lastReWithCatch = catchErrorRowExtend(
         lastRe,
         currentDirPath,
         currentDirName,
@@ -228,7 +228,7 @@ function getAllFileExtend(
         currentColor,
         "can not open current dir"
       );
-      return { lastRe: lastRewithCatch, error: 1 };
+      return { lastRe: lastReWithCatch, error: 1 };
     })
     .then(({ lastRe, error }) => {
       dirSizeMap[currentDirPath] = currentDirSize;

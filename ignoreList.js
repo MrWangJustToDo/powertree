@@ -11,6 +11,8 @@ const ignoreList = {
   ".yarn": 1,
   ".android": 1,
   ".java": 1,
+  ".npm": 1,
+  ".yarn": 1,
   maven: 1,
   ".next": 1,
   build: 1,
