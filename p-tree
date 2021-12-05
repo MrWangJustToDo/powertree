@@ -16,7 +16,7 @@ try {
   }
 } catch (e) {
   console.error(
-    `miss 'package.json' file, pleace download powerTree again and do not delete this file`
+    `miss 'package.json' file, please download powerTree again and do not delete this file`
   );
   return;
 }

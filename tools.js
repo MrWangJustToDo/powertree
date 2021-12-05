@@ -115,13 +115,22 @@ function execFileJudge(modStr) {
   }
 }
 
+const dirPathProgress = {
+  all: 1,
+  current: 0,
+};
+
 function flushItem(message, dug = false) {
   if (!dug) {
     if (process && process.stderr) {
+      message = `[${chalk.red(dirPathProgress.current)} / ${chalk.blue(
+        dirPathProgress.all
+      )}] : ${message}`;
       const len = process.stderr.columns;
       process.stderr.cursorTo(0);
       process.stderr.clearLine(1);
-      if (message.length <= len) {
+      const messageLen = `[${dirPathProgress.current} / ${dirPathProgress.all}] : ${message}`;
+      if (messageLen.length <= len) {
         process.stderr.write(message);
       } else {
         process.stderr.write(message.slice(0, len - 3) + "...");
@@ -138,3 +147,4 @@ exports.transformUidToUser = transformUidToUser;
 exports.execFileJudge = cache(execFileJudge);
 exports.flushItem = flushItem;
 exports.cache = cache;
+exports.dirPathProgress = dirPathProgress;

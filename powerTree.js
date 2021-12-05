@@ -2,7 +2,10 @@ const path = require("path");
 const chalk = require("chalk");
 const process = require("process");
 const { getRandomColor, fileStat, flushItem } = require("./tools");
-const { getAllFileBase, getAllFileExtend } = require("./getAllFile");
+const {
+  getAllFileBase,
+  getAllFileExtendAsync,
+} = require("./getAllFile");
 
 /**
  * 入口函数
@@ -34,8 +37,7 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
         // 扩展显示模式，使用递归
         console.time("search ~~");
         if (extend) {
-          return getAllFileExtend(
-            "\n",
+          return getAllFileExtendAsync(
             currentPath,
             currentName,
             " ",
@@ -68,7 +70,7 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
       }
     })
     .catch(() =>
-      console.log(chalk.red("--Path Not Exist Or Permission Denied--"))
+      console.log(chalk.red("--Path Not Exist or Permission Denied--"))
     );
 }
 
