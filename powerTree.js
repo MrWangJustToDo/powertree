@@ -1,11 +1,14 @@
 const path = require("path");
 const chalk = require("chalk");
 const process = require("process");
-const { getRandomColor, fileStat, flushItem } = require("./tools");
 const {
-  getAllFileBase,
-  getAllFileExtendAsync,
-} = require("./getAllFile");
+  getRandomColor,
+  fileStat,
+  flushItem,
+  clearTerminal,
+} = require("./tools");
+const { getAllFileBase } = require("./getAllFileBase");
+const { getAllFileExtendAsync } = require("./getAllFileAsync");
 
 /**
  * 入口函数
@@ -49,7 +52,8 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             {}
           )
             .then((all) => {
-              flushItem("");
+              flushItem(currentName);
+              clearTerminal();
               console.timeEnd("search ~~");
               return all;
             })

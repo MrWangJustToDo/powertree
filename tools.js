@@ -133,10 +133,16 @@ function flushItem(message, dug = false) {
       if (messageLen.length <= len) {
         process.stderr.write(message);
       } else {
-        process.stderr.write(message.slice(0, len - 3) + "...");
+        process.stderr.write(message.slice(0, len - 5) + "...");
       }
     }
   }
+}
+
+function clearTerminal() {
+  process.stderr.cursorTo(0);
+  process.stderr.clearLine(1);
+  process.stderr.write("");
 }
 
 exports.getRandomColor = getRandomColor;
@@ -146,5 +152,6 @@ exports.getChmod = cache(getChmod);
 exports.transformUidToUser = transformUidToUser;
 exports.execFileJudge = cache(execFileJudge);
 exports.flushItem = flushItem;
+exports.clearTerminal = clearTerminal;
 exports.cache = cache;
 exports.dirPathProgress = dirPathProgress;
