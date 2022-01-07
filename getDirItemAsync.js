@@ -9,6 +9,17 @@ const {
   dirPathProgress,
 } = require("./tools");
 
+/**
+ *
+ * @param {string} currentDirPath 当前文件夹的绝对路径
+ * @param {string} currentDirName 当前文件夹名称
+ * @param {string} currentPreString 当前层级的第一列连接前缀字符串
+ * @param {string} currentPreExtendString 当前层级的第二列连接前缀字符串
+ * @param {string} joinString 当前层级的连接字符串
+ * @param {string} initPad 两列数据的间隙
+ * @param {string} currentColor 当前需要的显示颜色
+ * @param {boolean} isUnixMod 当前系统
+ */
 function getDirRowExAsync(
   currentDirPath,
   currentDirName,

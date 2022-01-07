@@ -60,7 +60,6 @@ function listFiles(colorFlag, extend, dir, initPad = 65) {
             .then(console.log);
         } else {
           // 普通显示模式，获取到的数据直接输出
-          console.log(".");
           return getAllFileBase(
             currentPath,
             currentName,
