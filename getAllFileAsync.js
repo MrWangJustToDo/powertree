@@ -33,7 +33,7 @@ function getAllFileExtendAsync(
   )
     .then(([currentDirItemArr, currentDirValue]) => {
       const temp = [];
-      if (ignoreList[currentDirName]) {
+      if (ignoreList(currentDirName)) {
         temp.push(() =>
           catchErrorRowExtendAsync(
             currentDirPath,

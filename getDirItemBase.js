@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require("fs");
 const chalk = require("chalk");
 
 const { readDir } = require("./tools");
@@ -29,7 +29,7 @@ function getDirRowBase(
         current += currentDirName;
       }
       console.log(current);
-      if (ignoreList[currentDirName]) {
+      if (ignoreList(currentDirName)) {
         throw -1;
       }
       return currentDirItemArr;
